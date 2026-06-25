@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # wf_backend (CI/CD Test Application)
 
 This is a FastAPI-based backend application configured with a GitHub Actions CI/CD pipeline for automated testing and deployment to the on-prem server `tpt-mq-ssbe03.wdc.com`.
@@ -79,3 +80,6 @@ To allow the runner to automatically restart the systemd service during deployme
 runner ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart wf_backend.service, /usr/bin/mkdir -p /opt/wf_backend, /usr/bin/chown -R runner\:runner /opt/wf_backend
 ```
 *(Make sure to replace `runner` with the actual username running the GitHub self-hosted runner service).*
+=======
+# cicd
+>>>>>>> fbe54f231c03a8953279c9f6a677cca1ce5a2ebd
