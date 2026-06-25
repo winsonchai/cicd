@@ -13,6 +13,7 @@ def test_health_check():
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
+
 def test_read_item():
     response = client.get("/items/42?q=test")
     assert response.status_code == 200

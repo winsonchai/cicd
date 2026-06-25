@@ -2,6 +2,8 @@ from fastapi import FastAPI
 
 app = FastAPI(title="CI/CD Test Application")
 
+
+
 @app.get("/")
 def read_root():
     return {"message": "Hello World"}
