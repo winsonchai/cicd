@@ -17,7 +17,6 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-code: '3.10'
         python-version: '3.10'
 
     - name: Install dependencies
@@ -28,3 +27,46 @@ jobs:
     - name: Run tests
       run: |
         pytest
+
+  deploy:
+    name: Deploy to On-Prem Server
+    runs-on: [self-hosted, linux]
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    env:
+      DEPLOY_DIR: /opt/wf_backend
+      SERVICE_NAME: wf_backend.service
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Sync files to deploy directory
+      run: |
+        echo "Creating deploy directory if it doesn't exist..."
+        sudo mkdir -p ${{ env.DEPLOY_DIR }}
+        sudo chown -R $USER:$USER ${{ env.DEPLOY_DIR }}
+
+        echo "Syncing code files..."
+        rsync -avz --delete \
+          --exclude='.git*' \
+          --exclude='venv' \
+          --exclude='__pycache__' \
+          --exclude='.pytest_cache' \
+          ./ ${{ env.DEPLOY_DIR }}/
+
+    - name: Setup Virtual Environment & Install dependencies
+      run: |
+        cd ${{ env.DEPLOY_DIR }}
+        if [ ! -d "venv" ]; then
+          python3 -m venv venv
+        fi
+        ./venv/bin/pip install --upgrade pip
+        ./venv/bin/pip install -r requirements.txt
+
+    - name: Restart Application Service
+      run: |
+        echo "Restarting service ${{ env.SERVICE_NAME }}..."
+        # Note: The runner user must have passwordless sudo permissions for systemctl
+        sudo systemctl restart ${{ env.SERVICE_NAME }} || echo "Warning: Could not restart systemd service. Make sure it is installed and sudo rules are configured."
+
