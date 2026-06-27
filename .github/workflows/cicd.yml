@@ -30,7 +30,7 @@ jobs:
 
   deploy:
     name: Deploy to On-Prem Server
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, linux, tpt-mq-ssbe03.wdc.com]
     needs: test
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     env:
